@@ -13,6 +13,7 @@ router.post('/add', async (req, res) => {
     console.log(newLink);
     await pool.query('INSERT INTO link set ?', newLink);//El primer parámetro es la consulta y el segundo es el objeto que se va a insertar.
     //El método query() retorna una promesa, por lo que se debe usar await (y por consecuente async)
+    req.flash('success', 'Link saved successfully');//El método flash() recibe dos parámetros: el nombre del mensaje y el mensaje en sí
     res.redirect('/links');
 });
 
@@ -25,13 +26,14 @@ router.get('/',  async (req, res) => {
 router.get('/delete/:id', async (req, res) => {
     const {id} = req.params; //Uso req.params porque el id es enviado por el cliente como parámetro en la url
     await pool.query('DELETE FROM link WHERE id = ?', id);
+    req.flash('success', 'Link removed successfully');
     res.redirect('/links');
 });
 
 router.get('/edit/:id', async (req, res) => {
     const {id} = req.params; //Uso req.params porque el id es enviado por el cliente como parámetro en la url
     const link = await pool.query('SELECT * FROM link WHERE id = ?', id);
-    console.log(link[0]);
+    //console.log(link[0]);
     res.render('links/edit', {link : link[0]});//Le estoy pasando el obj contenido en el array con el link obtenido de la consulta a la vista (la vista edit.hbs)
 });
 
@@ -39,6 +41,7 @@ router.post('/edit/:id', async (req, res) => {
     const {id} = req.params; 
     const newLink = req.body;
     await pool.query('UPDATE link SET ? WHERE id = ?', [newLink, id]);
+    req.flash('success', 'Link updated successfully');
     res.redirect('/links');//Le estoy pasando el obj contenido en el array con el link obtenido de la consulta a la vista (la vista edit.hbs)
 });
 

@@ -4,6 +4,10 @@ const express = require('express');
 const morgan = require('morgan');
 const {engine} = require('express-handlebars');  
 const path = require('path');
+const flash = require('connect-flash');
+const session = require('express-session');//Para poder usar flash se requiere almacenar en una sesión los mensajes flash, por lo que se debe usar este módulo para abrirla
+const MySQLStore = require('express-mysql-session');//Este módule permite almacenar las sesiones en la bd
+const {database} = require('./keys');//Importo las credenciales de la bd
 
 //Initializations
 
@@ -24,14 +28,24 @@ app.set('view engine', '.hbs'); //Hago uso del motor de plantillas
 
 //Middlewares (funciones que se ejecutan cada vez que un cliente envía una petición al servidor)
 
+app.use(session({
+    secret : 'sbzMysqlNodeSession',
+    resave : false,
+    saveUninitialized : false,
+    store : new MySQLStore(database)//Aquí se pasan los parámetros de la bd donde se almacenarán las sesiones
+}))
+app.use(flash());//Para poder usar mensajes flash(mensajes entre distintas vistas). Además, al ponerlo como middleware, se ejecuta en cada petición y podemos obtenerlo en el req
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false}));
 //urlencode permite entender los datos que envía el usuario desde un formulario
 app.use(express.json());
 
+
+
 //Global Variables
 
 app.use((req, res, next) => {
+    app.locals.success = req.flash('success');//De esta forma puedo usar el mensaje flash llamdo 'success' en cualquier vista
     next();
 });
 
