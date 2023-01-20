@@ -7,6 +7,7 @@ module.exports = {
         host: 'localhost',
         user: 'root',
         password: '',
-        databse: 'links_db'
+        database: 'links_db',
+        // port: 3306
     }
 };
