@@ -8,10 +8,12 @@ const flash = require('connect-flash');
 const session = require('express-session');//Para poder usar flash se requiere almacenar en una sesión los mensajes flash, por lo que se debe usar este módulo para abrirla
 const MySQLStore = require('express-mysql-session');//Este módule permite almacenar las sesiones en la bd
 const {database} = require('./keys');//Importo las credenciales de la bd
+const passport = require('passport');//Importamos passport para poder usar sus métodos
 
 //Initializations
 
 const app = express(); //Inicializo el servidor de express
+require('./lib/passport');//Aquí nos traemos la autenticación que se creó 
 
 //Settings (configuraciones del server de express o la bd)
 
@@ -39,8 +41,8 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false}));
 //urlencode permite entender los datos que envía el usuario desde un formulario
 app.use(express.json());
-
-
+app.use(passport.initialize());//Iniciamos passport
+app.use(passport.session());//Aquí se inicia una sesion en la passport guardará los datos 
 
 //Global Variables
 
