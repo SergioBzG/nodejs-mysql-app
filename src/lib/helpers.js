@@ -12,7 +12,7 @@ helpers.encryptPassword = async (password) => {
 //Se crea un método para verificar que la contreseña ingresada por el usuario corresponde a la guardada en la bd. Este método será utilizado para el LogIn
 helpers.matchPassword = async (password, savedPassword) => {
    try {
-    await bcrypt.compare(password, savedPassword);
+    return await bcrypt.compare(password, savedPassword);
    } catch (error) {
     console.log(error);
    } 

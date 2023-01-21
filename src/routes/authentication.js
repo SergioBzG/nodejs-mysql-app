@@ -25,6 +25,18 @@ router.post('/signup', passport.authenticate('local.signup',{
     failureFlash : true //Habilitamos los mensajes flash definidos anteriormente
 }))
 
+router.get('/signin', (req, res) => {
+    res.render('auth/signin');
+});
+
+router.post('/signin', (req, res, next) => {
+    passport.authenticate('local.signin', {
+        successRedirect : '/profile',
+        failureRedirect : '/signin',
+        failureFlash : true
+    })(req, res, next);
+});
+
 router.get('/profile', (req, res) => {
     res.send('Profile')
 });

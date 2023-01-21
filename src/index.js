@@ -31,7 +31,7 @@ app.set('view engine', '.hbs'); //Hago uso del motor de plantillas
 //Middlewares (funciones que se ejecutan cada vez que un cliente envía una petición al servidor)
 
 app.use(session({
-    secret : 'sbzMysqlNodeSession',
+    secret : 'SergioMysqlNodeSession',
     resave : false,
     saveUninitialized : false,
     store : new MySQLStore(database)//Aquí se pasan los parámetros de la bd donde se almacenarán las sesiones
@@ -48,6 +48,7 @@ app.use(passport.session());//Aquí se inicia una sesion en la passport guardar�
 
 app.use((req, res, next) => {
     app.locals.success = req.flash('success');//De esta forma puedo usar el mensaje flash llamdo 'success' en cualquier vista
+    app.locals.message = req.flash('message');
     next();
 });
 
