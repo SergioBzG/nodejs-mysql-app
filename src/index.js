@@ -41,7 +41,7 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false}));
 //urlencode permite entender los datos que envía el usuario desde un formulario
 app.use(express.json());
-app.use(passport.initialize());//Iniciamos passport
+app.use(passport.initialize());//Iniciamos passport. Esto puebla al obj req con diferentes métodos (algunos de estos méstodos son usados en otros archivos)
 app.use(passport.session());//Aquí se inicia una sesion en la passport guardará los datos 
 
 //Global Variables
@@ -49,6 +49,7 @@ app.use(passport.session());//Aquí se inicia una sesion en la passport guardar�
 app.use((req, res, next) => {
     app.locals.success = req.flash('success');//De esta forma puedo usar el mensaje flash llamdo 'success' en cualquier vista
     app.locals.message = req.flash('message');
+    app.locals.user = req.user;//Gracias a la serializacón que realizo en passport.js el usuario queda guardado en la sesión y puedo acceder a él mediante req.user. Aquí lo hago público para poder acceder a los datos del usuario desde cualqier vista con el nombre user.
     next();
 });
 

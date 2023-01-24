@@ -3,8 +3,9 @@ const router = express.Router();
 
 const pool = require('../database');
 const passport = require('passport');
+const {isLoggedIn, isNotLoggedIn} = require('../lib/auth');//Métodos que nos permite proteger las rutas
 
-router.get('/signup', (req, res) => {
+router.get('/signup', isNotLoggedIn, (req, res) => {
     res.render('auth/signup')
 });
 
@@ -25,7 +26,7 @@ router.post('/signup', passport.authenticate('local.signup',{
     failureFlash : true //Habilitamos los mensajes flash definidos anteriormente
 }))
 
-router.get('/signin', (req, res) => {
+router.get('/signin', isNotLoggedIn, (req, res) => {
     res.render('auth/signin');
 });
 
@@ -37,8 +38,15 @@ router.post('/signin', (req, res, next) => {
     })(req, res, next);
 });
 
-router.get('/profile', (req, res) => {
-    res.send('Profile')
+router.get('/profile', isLoggedIn, (req, res) => {
+    res.render('profile');
+});
+
+router.get('/logout', isLoggedIn, (req, res) => {
+    req.logOut(req.user, err => {//logOut() es un método que me ofrece passport para limpiar la sesión de un usuario
+        if(err) return next(err);
+        res.redirect('/signin');
+    });   
 });
 
 module.exports = router;

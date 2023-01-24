@@ -2,7 +2,7 @@
 
 const passport = require('passport');//Passport es un middleware de autenticación para Node.js, que nos permite autenticar usuarios de diferentes formas haciendo uso de redes sociales.
 const pool = require('../database');
-const helpers = require('../lib/helpers');//Importo el módulo que cree para con los métodos para cifrar la contraseña y validarla
+const helpers = require('./helpers');//Importo el módulo que cree para con los métodos para cifrar la contraseña y validarla
 const LocalStrategy = require('passport-local').Strategy;//passport-local es un módulo de Passport que nos permite autenticar usuarios de manera local haciendo uso de nuestra base de datos (con un usuario y contraseña).
 
 //Método de autenticación para el inicio de sesion
@@ -26,6 +26,7 @@ passport.use('local.signin', new LocalStrategy({
 }));
 
 //Método de autenticación para el registro 
+// ¡¡¡FALTA VERIFICAR QUE EL USERNAME NO ESTÉ REPETIDO!!!!!
 passport.use('local.signup', new LocalStrategy({
     usernameField: 'username',//nombre del campo en el formulario
     passwordField: 'password',//nombre del campo en el formulario
