@@ -12,6 +12,7 @@ router.post('/add', isLoggedIn, async (req, res) => {
     //No importa que ya haya una ruta con el mismo nombre, porque el método http es distinto: uno es get y el otro es post
     const newLink = req.body;//En res.body se encuentran los datos que se envían desde el formulario
     console.log(newLink);
+    newLink.user_id = req.user.id;
     await pool.query('INSERT INTO link set ?', newLink);//El primer parámetro es la consulta y el segundo es el objeto que se va a insertar.
     //El método query() retorna una promesa, por lo que se debe usar await (y por consecuente async)
     req.flash('success', 'Link saved successfully');//El método flash() recibe dos parámetros: el nombre del mensaje y el mensaje en sí
@@ -19,7 +20,7 @@ router.post('/add', isLoggedIn, async (req, res) => {
 });
 
 router.get('/', isLoggedIn, async (req, res) => {
-    const links = await pool.query('SELECT * FROM link');
+    const links = await pool.query('SELECT * FROM link WHERE user_id = ?', req.user.id);
     console.log(links);
     res.render('links/list', {links});//Le estoy pasando el array links obtenido de la consulta a la vista (la vista list.hbs)
 })
