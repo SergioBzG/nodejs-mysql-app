@@ -26,18 +26,23 @@ passport.use('local.signin', new LocalStrategy({
 }));
 
 //Método de autenticación para el registro 
-// ¡¡¡FALTA VERIFICAR QUE EL USERNAME NO ESTÉ REPETIDO!!!!!
 passport.use('local.signup', new LocalStrategy({
     usernameField: 'username',//nombre del campo en el formulario
     passwordField: 'password',//nombre del campo en el formulario
     passReqToCallback: true //Este callback nos permite recibir el obj req como parámetro para la función que se encuentra dentro de LocalStrategy y que es ejecutada
 }, async (req, username, password, done) => { //done es otro callback que permite continuar con el resto de código de nuestra app
-    const newUser = req.body;
-    newUser.password = await helpers.encryptPassword(password);//Se guarda su contraseña cifrada
-    const result = await pool.query('INSERT INTO user SET ?', newUser);
-    // console.log(newUser);
-    newUser.id = result.insertId;
-    return done(null, newUser);//Se retorna el newUser para que lo almacene en una sesion. El null se retorna en caso de error
+    const row = await pool.query('SELECT * FROM user WHERE username = ?', username);
+    if(row.length === 0){
+        const newUser = req.body;
+        newUser.password = await helpers.encryptPassword(password);//Se guarda su contraseña cifrada
+        const result = await pool.query('INSERT INTO user SET ?', newUser);
+        // console.log(newUser);
+        newUser.id = result.insertId;
+        return done(null, newUser);//Se retorna el newUser para que lo almacene en una sesion. El null se retorna en caso de error
+    } else {
+        return done(null, false, req.flash('message', 'This username already exits'))
+    }
+    
 }));
 
 //Desde la documentación de passport nos dicen que debemos definir dos procesos: uno para serializar el usuario y otro para deserializarlo
